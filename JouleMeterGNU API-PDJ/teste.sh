@@ -1,0 +1,1 @@
+cat /proc/cpuinfo | grep processor | sort -u | wc -l

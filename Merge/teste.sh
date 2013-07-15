@@ -1,0 +1,1 @@
+sudo cpufreq-set c 1 -g userspace && sudo cpufreq-set c 1 -r -f 2.3329999999999997Ghz

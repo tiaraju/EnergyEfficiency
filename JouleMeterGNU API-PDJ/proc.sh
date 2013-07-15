@@ -1,0 +1,1 @@
+egrep "^processor" /proc/cpuinfo | wc -l > /home/tiaraju/data.txt

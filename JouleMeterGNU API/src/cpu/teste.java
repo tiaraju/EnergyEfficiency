@@ -1,0 +1,50 @@
+package cpu;
+
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+
+
+
+public class teste {
+	public static void main(String[] args) throws IOException {
+		Process p=null;
+		String line=null;
+		int numberOfCpus=0;
+
+		try {
+			//TODO
+			//verificar se em /proc/cpuinfo ele diz o numero de cpus em cpucores
+			p = Runtime.getRuntime().exec("cat /proc/cpuinfo");
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+		try {
+			line=reader.readLine();
+			while(line!= null){
+				if(line.contains("siblings")){
+					numberOfCpus=Integer.parseInt(line.split(" ")[1]);
+					break;
+				}	
+				line = reader.readLine();
+			}
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		System.out.println(numberOfCpus);
+	}
+
+
+
+
+
+
+
+
+}
