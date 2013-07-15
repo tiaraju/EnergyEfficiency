@@ -1,6 +1,8 @@
 package cpu;
 
 import java.io.BufferedReader;
+
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -10,10 +12,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import wattage.EnergyMeter;
+import wattage.*;
 
 
 
@@ -54,13 +56,16 @@ public class CPUEnergyMeter{
 	private int numProcessors;
 	private EnergyMeter getWattage;
 
+	FileWriter identifyFreq;
+
+
 
 	public CPUEnergyMeter(int type,String hostName,String userName,String password){
-		try {
+		/*try {
 			this.getWattage = new EnergyMeter(type, hostName, userName, password);
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
-		}
+		}*/
 	}
 
 
@@ -84,7 +89,7 @@ public class CPUEnergyMeter{
 							break;
 						}
 						for(int k=0;k<matrix[i].length;k++){
-							if(line != " "){
+							if(!line.equals(" ")){
 								if(!(line.split(" ")[k].equals(" "))){
 									matrix[i][k]=Double.valueOf(line.split(" ")[k]);
 								}
@@ -95,6 +100,12 @@ public class CPUEnergyMeter{
 					}
 				}
 				reader.close();
+				
+				for(int i=0;i<matrix.length;i++){
+					for(int k=0;k<matrix[i].length;k++){
+						System.out.println(matrix[i][k]);
+					}
+				}
 				return matrix;
 
 			} catch (IOException e) {
@@ -117,6 +128,11 @@ public class CPUEnergyMeter{
 		String userName = System.getProperty("user.name");		
 		monitor= new CPUMonitor();
 		Process p=null;		
+		try {
+			identifyFreq = new FileWriter("/home/tiaraju/freqTime.txt");
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
 
 		try {
 			if(!(new File("/home/"+userName+"/JMGProject").exists())){
@@ -162,16 +178,22 @@ public class CPUEnergyMeter{
 			}
 			try {
 				Runtime.getRuntime().exec("sudo killall stress").waitFor();
-				getData(i-1,overallAverage,matrixOfConsumption);
+				//getData(i-1,overallAverage,matrixOfConsumption);
+
 			} catch (InterruptedException | IOException e) {
 				System.err.println(e.getMessage());
 			}	
 		}
 		try {
+			identifyFreq.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		/*	try {
 			Runtime.getRuntime().exec("xset -display :0.0 dpms force on");
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
-		}
+		}*/
 
 		return matrixOfConsumption;
 	}
@@ -234,12 +256,14 @@ public class CPUEnergyMeter{
 			}
 			try {
 				measures(i,(time*1000));
+
 			} catch (Exception e1) {
 				System.err.println(e1.getMessage());
 			}
 			try {
 				Runtime.getRuntime().exec("sudo killall stress").waitFor();
-				getData(i-1,overallAverage,matrixOfConsumption);	
+				getData(i-1,overallAverage,matrixOfConsumption);
+				Thread.sleep(10000);
 			} catch (InterruptedException | IOException e) {
 				System.err.println(e.getMessage());
 			}
@@ -255,19 +279,36 @@ public class CPUEnergyMeter{
 	}
 
 	private  void measures(int num,int time) throws Exception {
+		saveTime(num+" CPU",identifyFreq);
 		for (int i = frequencies.length - 1; i >= 0; i--) {
+			saveTime((frequencies.length-1-i)+"", identifyFreq);
 			average = new ArrayList<Double>();
 			double freq = Integer.parseInt(frequencies[i]) * 0.000001;
 			analyzeFreq(String.valueOf(freq),time);
 		}
 	}
 
-	private int getNumberOfProcessors() throws Exception {
-		Process p = Runtime.getRuntime().exec("cat /sys/devices/system/cpu/cpu0/cpufreq/related_cpus");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		String[] processadores = reader.readLine().split(" ");
-		return processadores.length;
+	//JUSTO TO RESOLVER THE PDJ-CLOUD RACADM PROBLEM
+	private void saveTime(String freqIndex,FileWriter writer) throws IOException{
+		writer.append(freqIndex+"-"+new Date().toString().substring(11,19)+"\n");
 	}
+
+	private int getNumberOfProcessors() throws Exception {
+		/*int count=1;
+		File diretorio = new File("/sys/devices/system/cpu/cpu0");
+		while(diretorio.exists()){
+			diretorio = new File("/sys/devices/system/cpu/cpu"+count);
+			count++;
+
+		}*/
+		writeSH("cat /proc/cpuinfo | grep processor | sort -u | wc -l");
+
+		Process p = Runtime.getRuntime().exec("sh teste.sh");
+		InputStream s= p.getInputStream();
+		BufferedReader file = new BufferedReader(new InputStreamReader(s));
+		return Integer.parseInt(file.readLine());
+	}
+
 	private void analyzeFreq(String freq,int intervaloDeTempo) throws Exception  {
 		final int INTERVALO_DE_TEMPO = intervaloDeTempo;
 		try {
@@ -280,7 +321,8 @@ public class CPUEnergyMeter{
 				timeSleep = System.currentTimeMillis();
 				if((timeSleep+INTERVALO_DE_TEMPO )-System.currentTimeMillis()>0){
 					Thread.sleep((timeSleep+INTERVALO_DE_TEMPO )-System.currentTimeMillis());
-				}	
+				}
+				Thread.sleep(1000);
 
 				medicoes.add(takeData());		
 			} 
@@ -341,7 +383,8 @@ public class CPUEnergyMeter{
 	}
 
 	private double takeData() throws IOException {
-		return getWattage.getWattage();
+		//return getWattage.getWattage();
+		return 0;
 	}
 
 	private void getData(int num,List<String> in2,double[][] matrix) throws IOException{
@@ -459,5 +502,6 @@ public class CPUEnergyMeter{
 		return result;
 	}
 
-
 }
+
+

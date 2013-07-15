@@ -1,7 +1,6 @@
 package disk;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -51,32 +50,25 @@ public class DiskMonitor {
 	/**
 	 * 
 	 * @return  The number of kb written in the hard disk per second
-	 * @throws FileNotFoundException 
 	 */
-	public int getActualWrittenPerSecond() {
+	public int getActualWrittenPerSecond(){
+
 		String userName = System.getProperty("user.name");
 		BufferedReader reader= null;
 		FileReader diskReader=null;
 		try {
 			FileWriter writeSh= new FileWriter("/home/"+userName+"/disk.sh");
-			writeSh.append("iostat -d -x | grep 'sda'| awk '{print $7;}' > /home/"+userName+"/diskWritten.txt");
+			writeSh.append("iostat -d -x | grep 'sda'| awk '{print $7;}' > /home/tiaraju/diskWritten.txt");
 			writeSh.close();
 			Runtime.getRuntime().exec("sh /home/"+userName+"/disk.sh");
 			diskReader = new FileReader("/home/"+userName+"/diskWritten.txt");
 			reader = new BufferedReader(diskReader);
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			System.out.println("quebrouuuuu");
 		}
 		int result=0;
 		try {
-			int indexOfSeparator;
-			String line = reader.readLine();
-			if(line.contains(",")){
-				indexOfSeparator =line.indexOf(",");
-			}else{
-				indexOfSeparator= line.indexOf(".");
-			}
-			result = Integer.parseInt(line.substring(0,indexOfSeparator));
+			result = Integer.parseInt(reader.readLine().substring(0,1));
 			reader.close();
 			diskReader.close();
 		} catch (Exception e) {

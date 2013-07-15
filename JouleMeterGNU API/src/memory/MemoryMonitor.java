@@ -13,7 +13,7 @@ public class MemoryMonitor {
 	 * 
 	 * @return
 	 */
-	public double getTotalMemory(){
+	public long getTotalMemory(){
 		String fullMemory=null;
 		Process p=null;
 		try {
@@ -49,7 +49,7 @@ public class MemoryMonitor {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return Double.valueOf(fullMemory);
+		return Integer.valueOf(fullMemory);
 	}
 
 
@@ -58,7 +58,7 @@ public class MemoryMonitor {
 	 * 
 	 * @return
 	 */
-	public double getFreeMemory(){
+	public long getFreeMemory(){
 		Process p=null;
 		try {
 			p = Runtime.getRuntime().exec("cat /proc/meminfo");
@@ -85,14 +85,14 @@ public class MemoryMonitor {
 		String[] temp =memoryInfo.get(1).split(":")[1].split(" ");
 		String freeMemory=(temp[temp.length-2]);
 		
-		return Double.valueOf(freeMemory);
+		return Integer.valueOf(freeMemory);
 	}
 
 	/**
 	 * 
 	 * @return
 	 */
-	public double getUsedMemory(){
+	public long getUsedMemory(){
 		return getTotalMemory()-getFreeMemory();
 	}
 	/**
@@ -172,4 +172,15 @@ public class MemoryMonitor {
 		return Double.valueOf(bufferedMemory);
 	}
 
+	
+	public static void main(String[] args) throws Exception{
+		MemoryMonitor m = new MemoryMonitor();
+		double free = m .getUsedMemory();
+		
+		while(true){
+			System.out.println(free);
+			Thread.sleep(2000);
+			free = m .getUsedMemory();
+		}
+	}
 }

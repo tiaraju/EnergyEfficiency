@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import wattage.EnergyMeter;
 import cpu.CPUWorkloadGenerator;
 
@@ -22,14 +21,19 @@ public class MemoryEnergyMeter {
 	private EnergyMeter wattage;
 	
 	public MemoryEnergyMeter (int type,String hostName,String userName,String password){
-		try {
+		/*try {
 			this.wattage = new EnergyMeter(type, hostName, userName, password);
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
-		}
+		}*/
 	}
 	
 	private  ArrayList<Double> mediasMemoria;
+	
+	
+	public double[] getPartialMemory(){
+		return new double[0];
+	}
 		
 	/**
 	 * 
@@ -97,7 +101,7 @@ public class MemoryEnergyMeter {
 			//Runtime.getRuntime().exec("xset dpms 0 0 1");
 			Thread.sleep(10000);
 			result= fazMedicao();
-			Runtime.getRuntime().exec("xset -display :0.0 dpms force on");
+			//Runtime.getRuntime().exec("xset -display :0.0 dpms force on");
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
@@ -111,7 +115,7 @@ public class MemoryEnergyMeter {
 			double media = 0;
 			for(int i=0;i<10;i++){
 				media+=pegaDados();
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			}		
 			mediasMemoria.add(media/10);
 		}
@@ -145,7 +149,7 @@ public class MemoryEnergyMeter {
 	
 
 	private   double pegaDados() throws IOException {
-		return wattage.getWattage();
+		return 0;
 
 	}
 

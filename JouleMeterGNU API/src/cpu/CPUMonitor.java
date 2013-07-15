@@ -1,11 +1,15 @@
 package cpu;
 
 import java.io.BufferedReader;
+import java.io.File;
+
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,30 +36,31 @@ public class CPUMonitor{
 	 * 
 	 */
 	public int getNumberOfCPUs(){
-		Process p=null;
 		String line=null;
 		int numberOfCpus=0;
-
+		String userName = System.getProperty("user.name");	
 		try {
-			
-			p = Runtime.getRuntime().exec("cat /proc/cpuinfo");
-		} catch (IOException e) {
+			FileWriter writer = new FileWriter("proc.sh");
+			writer.append("egrep \"^processor\" /proc/cpuinfo | wc -l > /home/"+userName+"/data.txt");
+			writer.close();
+			Runtime.getRuntime().exec("sh proc.sh").waitFor();
+		} catch (IOException | InterruptedException e) {
 			System.err.println(e.getMessage());
 		}
-		BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
+		BufferedReader reader=null;
+		try {
+			reader = new BufferedReader(new FileReader("/home/"+userName+"/data.txt"));
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		try {
 			line=reader.readLine();
-			while(line!= null){
-				if(line.contains("siblings")){
-					numberOfCpus=Integer.parseInt(line.split(" ")[1]);
-					break;
-				}	
-				line = reader.readLine();
-			}
+			numberOfCpus = Integer.parseInt(line);
+			reader.close();
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			System.out.println("nao deu");
 		}
+
 		return numberOfCpus;
 	}
 
@@ -92,27 +97,28 @@ public class CPUMonitor{
 	 * 
 	 */
 	public double getCPULoad(){
-		
+
 		String userName = System.getProperty("user.name");	
 		FileWriter writer;
 		String line=null;
 		try {
 			writer = new FileWriter("t.sh");
-			writer.write("top -b -d 0.5 -n2 | grep 'Cpu(s)' | tail -1 > /home/"+userName+"/top.txt");
+			writer.write("top -b -d 0.9 -n2 | grep 'Cpu(s)' | tail -1 > /home/"+userName+"/top.txt");
 			writer.close();
 			Runtime.getRuntime().exec("sh t.sh").waitFor();
 			BufferedReader r = new BufferedReader(new FileReader("/home/"+userName+"/top.txt"));
 			line = r.readLine();
+			r.close();
+			writer.close();
 		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
+			System.out.println("nao atualizou a linha");
 		}
 		if(line != null){
-			int index =line.split(",")[0].split(":")[1].indexOf("%");
-			return Double.parseDouble(line.split(",")[0].split(":")[1].substring(0,index));
+			String percentage = line.split(",")[0].split(":")[1];
+			return Double.parseDouble(percentage.split(" ")[percentage.split(" ").length-2]);
 		}
-		System.out.println("SUADUIA");
-		return -1;
-		
+		return -5;
+
 	}
 	/**
 	 * Returns an array of size "n" with the frequencies in use for each of the "n" CPUs in your computer. 
@@ -166,9 +172,9 @@ public class CPUMonitor{
 
 		return currentfreq;
 	}
-	
+
 	public double getActualFreq(int cpu){
-		cpu--;
+
 		Process p=null;
 		try {
 			p = Runtime.getRuntime().exec("cat /sys/devices/system/cpu/cpu"+cpu+"/cpufreq/scaling_cur_freq");
@@ -182,7 +188,12 @@ public class CPUMonitor{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println(line);
 		return Double.parseDouble(line);
 	}
 
+	public static void main(String[] args) {
+		CPUMonitor m = new CPUMonitor();
+		System.out.println(m.getNumberOfCPUs());
+	}
 }

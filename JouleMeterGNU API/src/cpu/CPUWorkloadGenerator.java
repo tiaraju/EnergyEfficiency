@@ -2,6 +2,7 @@ package cpu;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import cpu.CPUMonitor;
 
 
 /**
@@ -95,13 +96,18 @@ public class CPUWorkloadGenerator{
 	 */
 	public void resetCPUStress(){
 		try {
-			Runtime.getRuntime().exec("sudo killall stress").waitFor();
+			Runtime.getRuntime().exec("killall stress").waitFor();
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			System.out.println("nao resetou=X");
 		} catch (InterruptedException e) {
-			System.err.println(e.getMessage());
+			System.out.println("nao resetou=X");
 		}
 
+	}
+	
+	public static void main(String[] args) {
+		CPUWorkloadGenerator w = new CPUWorkloadGenerator();
+		w.resetCPUStress();
 	}
 
 }

@@ -20,11 +20,11 @@ public class DiskEnergyMeter {
 	private EnergyMeter getWattage;
 	
 	public DiskEnergyMeter(int type,String hostName,String userName,String password){
-		try {
+	/*	try {
 			this.getWattage = new EnergyMeter(type, hostName, userName, password);
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
-		}
+		}*/
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class DiskEnergyMeter {
 		try {
 			//Runtime.getRuntime().exec("xset +dpms");
 			//Runtime.getRuntime().exec("xset dpms 0 0 1");
-			Runtime.getRuntime().exec("stress --hdd 1 --hdd-bytes 320G");
+			Runtime.getRuntime().exec("stress --hdd 1");
 			Thread.sleep(10000);
 			result=fazMedicao(mediasProvisoriasUse);
 			
@@ -44,7 +44,7 @@ public class DiskEnergyMeter {
 			e.printStackTrace();
 		} 
 		try {
-			Runtime.getRuntime().exec("xset -display :0.0 dpms force on");
+			//Runtime.getRuntime().exec("xset -display :0.0 dpms force on");
 			Runtime.getRuntime().exec("sudo killall stress").waitFor();
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
@@ -60,11 +60,11 @@ public class DiskEnergyMeter {
 	public double getPowerHdStandBy(){
 		double result=0;
 		try {
-			Runtime.getRuntime().exec("xset +dpms");
-			Runtime.getRuntime().exec("xset dpms 0 0 1");
+			//Runtime.getRuntime().exec("xset +dpms");
+			//Runtime.getRuntime().exec("xset dpms 0 0 1");
 			Thread.sleep(10000);
 			result = fazMedicao(mediasProvisoriasOcioso);
-			Runtime.getRuntime().exec("xset -display :0.0 dpms force on");
+			//Runtime.getRuntime().exec("xset -display :0.0 dpms force on");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -98,6 +98,7 @@ public class DiskEnergyMeter {
 					e.printStackTrace();
 				}
 			}
+			Thread.sleep(2000);
 		}
 		media = calculaMedia(potencias);
 		list.add(media);
@@ -115,7 +116,7 @@ public class DiskEnergyMeter {
 
 
 	private double pegaPotencia() throws Exception {
-		return getWattage.getWattage();
+		return 0;
 	}
 
 	private boolean possibilidadeDeRecursao(List<Double> list) {

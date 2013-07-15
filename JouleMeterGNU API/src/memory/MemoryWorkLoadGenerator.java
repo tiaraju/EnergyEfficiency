@@ -24,7 +24,7 @@ public class MemoryWorkLoadGenerator {
 		try {
 			Runtime.getRuntime().exec("stress --vm 1 --vm-bytes "+memory+"K --vm-keep");
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			System.out.println("nao estressa");
 		}
 	}
 	/**
@@ -44,8 +44,8 @@ public class MemoryWorkLoadGenerator {
 	 */
 	public void resetStress(){
 		try {
-			Runtime.getRuntime().exec("sudo killall stress");
-		} catch (IOException e) {
+			Runtime.getRuntime().exec("sudo killall stress").waitFor();
+		} catch (IOException | InterruptedException e) {
 			System.err.println(e.getMessage());
 		}
 	}
