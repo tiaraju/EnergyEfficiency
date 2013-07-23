@@ -6,14 +6,19 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import memory.MemoryEnergyMeter;
 import memory.MemoryMonitor;
+import memory.MemoryWorkLoadGenerator;
 import video.VideoEnergyMeter;
+import wattage.EnergyMeter;
 import ch.ethz.ssh2.Connection;
 import cpu.CPUEnergyMeter;
+import cpu.CPUMonitor;
 import disk.DiskEnergyMeter;
 import disk.DiskMonitor;
 
@@ -92,7 +97,7 @@ public class JouleMeterGNU{
 
 
 
-		/*videoMeter = new VideoEnergyMeter(type,hostname,username,password);
+		videoMeter = new VideoEnergyMeter(type,hostname,username,password);
 		videoOn=videoMeter.getPowerVideoInUse();
 		videoOff=videoMeter.getPowerVideoOutOfUse();
 
@@ -107,7 +112,7 @@ public class JouleMeterGNU{
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
-		 */		
+		 		
 
 		MemoryMonitor memoryMonitor = new MemoryMonitor();
 		double freeMemory= memoryMonitor.getFreeMemory();
@@ -142,7 +147,7 @@ public class JouleMeterGNU{
 
 
 
-		/*cpuMeter= new CPUEnergyMeter(type,hostname,username,password);
+		cpuMeter= new CPUEnergyMeter(type,hostname,username,password);
 		try {
 			dataTime.append("cpustarts "+ new Date().toString().substring(11,19)+"\n");
 		} catch (IOException e2) {
@@ -205,7 +210,7 @@ public class JouleMeterGNU{
 		}
 		lazyDisk=diskMeter.getPowerHdStandBy();
 		try {
-			//minWrittenPerSecond=diskMonitor.getActualWrittenPerSecond();
+			minWrittenPerSecond=diskMonitor.getActualWrittenPerSecond();
 			try {
 				dataTime.append("harddiskstarts "+ new Date().toString().substring(11,19)+"\n");
 			} catch (IOException e2) {
@@ -226,7 +231,7 @@ public class JouleMeterGNU{
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		//maxWrittenPerSecond=diskMonitor.getActualWrittenPerSecond();
+		maxWrittenPerSecond=diskMonitor.getActualWrittenPerSecond();
 		try {
 			Runtime.getRuntime().exec("killall stress").waitFor();
 		} catch (IOException | InterruptedException e) {
@@ -235,14 +240,14 @@ public class JouleMeterGNU{
 
 
 			try {
-			//diskInformation= new FileWriter(new File("/home/"+userName+"/JMGProject/disk.txt"));
+			diskInformation= new FileWriter(new File("/home/"+userName+"/JMGProject/disk.txt"));
 		} catch (IOException e) {
-			//System.err.println(e.getMessage());
+			System.err.println(e.getMessage());
 		}
-		 */
+		 
 		try {
-			//diskInformation.append("\nMAXWS: "+maxWrittenPerSecond+"\nMINWS: "+minWrittenPerSecond);
-			//diskInformation.close();
+			diskInformation.append("\nMAXWS: "+maxWrittenPerSecond+"\nMINWS: "+minWrittenPerSecond);
+			diskInformation.close();
 			dataTime.close();
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -254,7 +259,7 @@ public class JouleMeterGNU{
 	//obtem os valores de como cada componente esta se comportando no momento ( cpu,disco,memoria)
 	private void obtainActualSituation(){
 		//condição atual da CPU
-		/*this.actualFreq=0;
+		this.actualFreq=0;
 		CPUMonitor cpuMonitor= new CPUMonitor();
 		this.actualCpus =(int)Math.round((cpuMonitor.getNumberOfCPUs()*((double)cpuMonitor.getCPULoad())/100));
 		System.out.println(actualCpus);
@@ -266,11 +271,11 @@ public class JouleMeterGNU{
 			freqs.add(cpuMonitor.getCPUFrequencyLevels()[i]);
 		}
 		actualFreq = freqs.indexOf(freq);
-		 */
-		/*//condição atual do disco
+		 
+		//condição atual do disco
 		DiskMonitor diskMonitor = new DiskMonitor();
 		this.actualDisk=diskMonitor.getActualWrittenPerSecond();
-		 */
+		 
 		//condição atual da memoria
 		MemoryMonitor memoryMonitor = new MemoryMonitor();
 		actualMemory =memoryMonitor.getUsedMemory();
@@ -285,9 +290,9 @@ public class JouleMeterGNU{
 		
 		try {
 			memoryReader= new FileReader("/home/"+userName+"/memoryResult.txt");
-			//diskReader= new FileReader("/home/"+userName+"/JMGProject/disk.txt");
-			//cpuReader = new FileReader("/home/"+userName+"/JMGProject/cpu.txt");
-			//videoReader= new FileReader("/home/"+userName+"/JMGProject/video.txt");
+			diskReader= new FileReader("/home/"+userName+"/JMGProject/disk.txt");
+			cpuReader = new FileReader("/home/"+userName+"/JMGProject/cpu.txt");
+			videoReader= new FileReader("/home/"+userName+"/JMGProject/video.txt");
 		} catch (FileNotFoundException e) {
 			System.err.println(e.getMessage());
 		}
@@ -343,7 +348,7 @@ public class JouleMeterGNU{
 			}
 		}catch(Exception e){
 		}
-		/*//valores do disco
+		//valores do disco
 		reader=new BufferedReader(diskReader);
 		try {
 			line = reader.readLine();
@@ -377,17 +382,17 @@ public class JouleMeterGNU{
 				System.err.println(e.getMessage());
 			}
 		}	 
-*/
+
 	}
 	//associa a condiçao atual do componente com o obtido na calibragem
 	
 	private double[] associateValues(){
 		double[] result=new double[5];
-		/*//cpu
+		//cpu
 		CPUEnergyMeter m = new CPUEnergyMeter(0, null, null, null);
 		double[][] cpuMatrix=m.getMatrixOfConsumption();
 		result[0]= cpuMatrix[actualCpus][actualFreq];
-		 */
+		 
 		//memoria
 		MemoryMonitor memoryMonitor = new MemoryMonitor();
 	
@@ -397,12 +402,12 @@ public class JouleMeterGNU{
 		result[1]=memory[percentageOfUse/25];
 				//memory[(roundMemory(actualMemory, memoryMonitor.getTotalMemory()))/25];
 		
-		/*//disco
+		//disco
 		if((maxWritten-actualDisk)<(actualDisk-minWritten)){
 			result[2]=maxDisk*(actualDisk/maxWritten);
 		}else{
 			result[2]=minDisk*(actualDisk/minWritten);
-		}*/
+		}
 		return result;
 	}
 
@@ -410,7 +415,7 @@ public class JouleMeterGNU{
 		String userName = System.getProperty("user.name");
 		double[] components=null; 
 		try {
-			//EnergyMeter meter = new EnergyMeter(type, hostname, username, password);
+			EnergyMeter meter = new EnergyMeter(type, hostname, username, password);
 			FileWriter validationFile = new FileWriter("/home/"+userName+"/JMGProject/validation.txt");
 			obtainActualSituation();
 			components=associateValues();
@@ -468,11 +473,11 @@ public class JouleMeterGNU{
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {	
-		/*Scanner input= new Scanner(System.in);
+		Scanner input= new Scanner(System.in);
 		boolean calibrate = false;
-
+		JouleMeterGNU meter = new JouleMeterGNU();
 		System.out.println("Welcome to JouleMeter GNU Project. Please, select your device that you will use to get power.");
-		System.out.println("Please, type 0 - Notebok's Battery");
+		System.out.println("Please, type 0 - Notebook's Battery");
 		System.out.println("1 - IDRAC Client");
 		System.out.println("2 - Yokogawa");
 		int choice = input.nextInt();
@@ -503,14 +508,13 @@ public class JouleMeterGNU{
 			meter.calibrate(YOKOGAWA, hostname,null,null);
 			calibrate = true;
 			break;
-		}*/
+		}
 
-		//meter.calibrate(0, null,null, null);
+		meter.calibrate(0, null,null, null);
 		FileWriter writer = new FileWriter("/home/tiaraju/memoryValidation.txt");
 		MemoryMonitor monitor = new MemoryMonitor();
-		JouleMeterGNU meter = new JouleMeterGNU();
-
 		meter.loadData();
+		MemoryWorkLoadGenerator work = new MemoryWorkLoadGenerator();
 		for(int i=0;i<=100;i+=10){
 			long memory=Math.round(monitor.getFreeMemory()*(i/100.0));
 			Runtime.getRuntime().exec("stress --vm 1 --vm-bytes "+memory+"K --vm-keep");
@@ -518,7 +522,7 @@ public class JouleMeterGNU{
 			meter.obtainActualSituation();
 			writer.append(i+"-"+memory+": "+new Date().toString().substring(11,19)+"- actualMem: "+actualMemory+"- percentage of use: "+roundMemory(actualMemory, monitor.getTotalMemory())+"-power: "+meter.associateValues()[1]+"\n");
 			Runtime.getRuntime().exec("killall stress").waitFor();
-			//work.resetStress();
+			work.resetStress();
 			Thread.sleep(5000);
 		}
 		writer.close();

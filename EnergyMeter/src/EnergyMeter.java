@@ -45,12 +45,12 @@ public class EnergyMeter {
 			/*EnergyMeter meter_battery = new EnergyMeter(BATTERY, null, null, null);
 			System.out.println(meter_battery.getWattage());*/
 			
-			EnergyMeter meter_idrac = new EnergyMeter(IDRAC, "150.165.15.136", "root", "dr4cLSD");
+			EnergyMeter meter_idrac = new EnergyMeter(IDRAC, "10.1.0.2", "root", "dr4cLSD");
 			int time=1;
-			FileWriter w = new FileWriter("/home/tiaraju/disk.txt");
+			FileWriter w = new FileWriter("/home/tiaraju/cpu2207.txt");
 			BufferedWriter writer = new BufferedWriter(w);
 			Thread.sleep(2000);
-			while (time <350) {
+			while (time <3500) {
 				writer.append(new Date().toString().substring(11,19) +  " - "+ meter_idrac.getWattage()+"\n");
 				time++;
 				Thread.sleep(1000); 

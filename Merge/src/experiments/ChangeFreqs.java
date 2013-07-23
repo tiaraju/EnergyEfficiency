@@ -21,7 +21,7 @@ public class ChangeFreqs {
 		writer = new FileWriter("/home/tiaraju/resultados/freqstimes.txt");
 		double[] freqs = cpuMonitor.getCPUFrequencyLevels();
 		int numOfCpus = cpuMonitor.getNumberOfCPUs();
-		for(int k=0;k<5;k++){
+		for(int k=0;k<numOfCpus;k++){
 			for (int i = freqs.length - 1; i >= 0; i--) {
 				freq =(freqs[i])* 0.000001;
 				String comando = "sudo cpufreq-set c " + k + " -g userspace && sudo cpufreq-set c " + k + " -r -f " + freq + "Ghz";
@@ -44,7 +44,7 @@ public class ChangeFreqs {
 	}
 
 	private void saveTime(FileWriter writer,int cpu,int freq)throws Exception{
-		writer.append("cpus: "+cpu+" freq: "+freq+" "+new Date().toString().substring(11,19)+"\n");
+		writer.append("cpus: "+cpu+"-freq: "+freq+"-"+new Date().toString().substring(11,19)+"\n");
 	}
 	
 	public static void main(String[] args) throws Exception{
