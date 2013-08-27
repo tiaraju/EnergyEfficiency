@@ -1,0 +1,75 @@
+package experiments;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import cpu.CPUEnergyMeter;
+import cpu.CPUMonitor;
+
+public class WatchStatus {
+
+	//this class is responsable for watch the current status of the components and associate a power value to that status. 
+	// Its used to compare the real value and the estimative ( CPU at first)
+
+	int actualCpus;
+	int actualFreq;
+	double[][] matrix;
+	CPUMonitor cpuMonitor;
+	FileWriter result;
+	final String userName;
+	
+
+	public WatchStatus(){
+		matrix=new CPUEnergyMeter(0,null,null,null).getMatrixOfConsumption();
+		cpuMonitor= new CPUMonitor();
+		userName=System.getProperty("user.name");
+		try {
+			result= new FileWriter("home/"+userName+"/JMGProject/watchingStatus.txt");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+	public void getStatus(){
+		this.actualFreq=0;
+		this.actualCpus =(int)Math.round((cpuMonitor.getNumberOfCPUs()*((double)cpuMonitor.getCPULoad())/100));
+		System.out.println(actualCpus);
+		int numberOfCpus;
+		if(actualCpus == 0){numberOfCpus=actualCpus;}else{  numberOfCpus=actualCpus-1;}
+		double freq=cpuMonitor.getActualFreq(numberOfCpus);
+		List<Double> freqs= new ArrayList<Double>();
+		for(int i=cpuMonitor.getCPUFrequencyLevels().length-1;i>=0;i--){
+			freqs.add(cpuMonitor.getCPUFrequencyLevels()[i]);
+		}
+		actualFreq = freqs.indexOf(freq);
+	}
+
+
+	public double associateValues(){
+		return matrix[actualCpus][actualFreq];
+	}
+	/**
+	 * 
+	 * @param time
+	 */
+	public void watch(int time){
+		BufferedWriter writer = new BufferedWriter(result);
+		double power;
+		String hour= new Date().toString().substring(11,19)
+
+		try {
+			writer.append(hour+"-"+"cpus:"+actualCpus+"freq:"+actualFreq+"-"+power);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+}

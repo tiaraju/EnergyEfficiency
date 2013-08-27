@@ -44,13 +44,13 @@ public class EnergyMeter {
 		try {
 			/*EnergyMeter meter_battery = new EnergyMeter(BATTERY, null, null, null);
 			System.out.println(meter_battery.getWattage());*/
-			
+		
 			EnergyMeter meter_idrac = new EnergyMeter(IDRAC, "10.1.0.2", "root", "dr4cLSD");
 			int time=1;
-			FileWriter w = new FileWriter("/home/tiaraju/cpu2207.txt");
+			FileWriter w = new FileWriter("/home/tiaraju/PowerDataChangeFreq.txt");
 			BufferedWriter writer = new BufferedWriter(w);
 			Thread.sleep(2000);
-			while (time <3500) {
+			while (time <4000) {
 				writer.append(new Date().toString().substring(11,19) +  " - "+ meter_idrac.getWattage()+"\n");
 				time++;
 				Thread.sleep(1000); 
@@ -59,9 +59,18 @@ public class EnergyMeter {
 			
 			writer.close();
 			w.close();
-				
-			/*EnergyMeter meter_yokogawa = new EnergyMeter(YOKOGAWA, "150.165.85.230:34318" , null, null);
-			System.out.println(meter_yokogawa.getWattage());*/
+		/*		
+			//EnergyMeter meter_yokogawa = new EnergyMeter(YOKOGAWA, "150.165.85.230:34318" , null, null);
+			System.out.println(meter_yokogawa.getWattage());
+			int time =0;
+			FileWriter writer = new FileWriter("/home/tiaraju/busy3.txt");
+			while(time<200){
+				writer.append(new Date().toString().substring(11,19)+ "- "+ meter_yokogawa.getWattage()+"\n");
+				time++;
+				Thread.sleep(1000);
+			}
+			writer.close();*/
+			
 			
 		} catch (NumberFormatException e) {
 			e.printStackTrace();

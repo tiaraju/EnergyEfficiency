@@ -115,7 +115,9 @@ public class CPUMonitor{
 		}
 		if(line != null){
 			String percentage = line.split(",")[0].split(":")[1];
-			return Double.parseDouble(percentage.split(" ")[percentage.split(" ").length-2]);
+			System.out.println(percentage);
+			int indexOfPercent = percentage.indexOf("u");
+			return Double.parseDouble(percentage.substring(0,indexOfPercent-1));
 		}
 		return -5;
 
@@ -188,12 +190,11 @@ public class CPUMonitor{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(line);
 		return Double.parseDouble(line);
 	}
 
 	public static void main(String[] args) {
 		CPUMonitor m = new CPUMonitor();
-		System.out.println(m.getNumberOfCPUs());
+		System.out.println(m.getCPULoad());
 	}
 }
