@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;Predictor.java&apos; to &apos;JouleMeterGNU API/src/predictor&apos;&#x0A;- Original project: &apos;JouleMeterGNU API-PDJ&apos;&#x0A;- Destination element: &apos;JouleMeterGNU API/src/predictor&apos;&#x0A;- Original element: &apos;predictor.Predictor.java&apos;" description="Copy compilation unit" destination="=JouleMeterGNU API/src&lt;predictor" element1="/src&lt;predictor{Predictor.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1378152751684" units="1" version="1.0"/>
+</session>
