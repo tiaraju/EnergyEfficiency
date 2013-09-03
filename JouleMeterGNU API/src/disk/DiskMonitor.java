@@ -61,14 +61,17 @@ public class DiskMonitor {
 			writeSh.append("iostat -d -x | grep 'sda'| awk '{print $7;}' > /home/tiaraju/diskWritten.txt");
 			writeSh.close();
 			Runtime.getRuntime().exec("sh /home/"+userName+"/disk.sh");
+			Thread.sleep(1000);
 			diskReader = new FileReader("/home/"+userName+"/diskWritten.txt");
 			reader = new BufferedReader(diskReader);
-		} catch (IOException e) {
-			System.out.println("quebrouuuuu");
-		}
+		} catch (IOException | InterruptedException e) {}
 		int result=0;
+		
 		try {
-			result = Integer.parseInt(reader.readLine().substring(0,1));
+			String line = reader.readLine();
+			int indexOf = line.indexOf((","));
+			if(indexOf==-1){indexOf=line.indexOf(".");}
+			result = Integer.parseInt(line.substring(0,indexOf));
 			reader.close();
 			diskReader.close();
 		} catch (Exception e) {

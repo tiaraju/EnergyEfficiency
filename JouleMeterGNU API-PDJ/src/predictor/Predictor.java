@@ -197,7 +197,7 @@ public class Predictor {
 		//cpu
 		CPUEnergyMeter m = new CPUEnergyMeter(0, null, null, null);
 		double[][] cpuMatrix=m.getMatrixOfConsumption();
-		result[0]= cpuMatrix[actualCpus][actualFreq];
+		result[0]= cpuMatrix[actualCpus-1][actualFreq-1];
 
 		//memoria
 		MemoryMonitor memoryMonitor = new MemoryMonitor();

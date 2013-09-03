@@ -30,20 +30,19 @@ public class Predictor {
 	private double minWritten;
 	private double maxVideo;
 	private double minVideo;
-	
-	
+
+
 	/**
 	 * this method returns an array that represents the current estimative of cpu,memory,disk,video, respectively.
 	 * The index 0 represents the cpu's power, 1 memory, 2 disk, 3 video 
 	 * @return
 	 */
 	public double[] predict(){
-		obtainActualSituation();
 		loadData();
 		double[] result= associateValues();
 		return result;
 	}
-	
+
 	/**
 	 * this method returns an array that represents the current status of system
 	 * The index 0 represents the actual freq, 1 actual cpus, 2 actual percentage of used memory, 3 used disk
@@ -65,7 +64,6 @@ public class Predictor {
 		this.actualFreq=0;
 		CPUMonitor cpuMonitor= new CPUMonitor();
 		this.actualCpus =(int)Math.round((cpuMonitor.getNumberOfCPUs()*((double)cpuMonitor.getCPULoad())/100));
-		System.out.println(actualCpus);
 		int numberOfCpus;
 		if(actualCpus == 0){numberOfCpus=actualCpus;}else{  numberOfCpus=actualCpus-1;}
 		double freq=cpuMonitor.getActualFreq(numberOfCpus);
@@ -85,16 +83,16 @@ public class Predictor {
 
 		// TODO condição atual do video
 	}
-	
-	
-	
+
+
+
 	//carrega os dados obtidos na calibragem
 	private void loadData(){
 		this.memory=new double[5];
 		BufferedReader reader;
 		String userName = System.getProperty("user.name");
 		try {
-			memoryReader= new FileReader("/home/"+userName+"/memoryResult.txt");
+			memoryReader= new FileReader("/home/"+userName+"/JMGProject/memory.txt");
 			diskReader= new FileReader("/home/"+userName+"/JMGProject/disk.txt");
 			videoReader= new FileReader("/home/"+userName+"/JMGProject/video.txt");
 		} catch (FileNotFoundException e) {
@@ -110,48 +108,34 @@ public class Predictor {
 			System.err.println(e.getMessage());
 		}
 		while(line!=null){
-			System.out.println(line);
 			if(line.substring(0,5).contains("50%")) {
-				System.out.println("foi 50");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[2]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}
 			else if(line.substring(0,5).contains("25%")){
-				System.out.println("foi 25");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[1]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}
 			else if(line.substring(0,5).contains("75%")){
-				System.out.println("foi 75");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[3]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}
 			else if(line.substring(0,5).contains("100%")) {
-				System.out.println("foi 100");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[4]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}
 			else if(line.substring(0,5).contains("0%")){
-				System.out.println("foi 0");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[0]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}else{
 				break;
 			}
 			try {
 				line=reader.readLine();
-			} catch (IOException e) {
-				System.out.println("naoleualinha");
-			}
+			} catch (IOException e) {}
 		}
 		try{
 			reader.close();
 			memoryReader.close();
 			for(Double d:memory){
-				System.out.println(d);
 			}
-		}catch(Exception e){
-		}
+		}catch(Exception e){}
+
 		//valores do disco
 		reader=new BufferedReader(diskReader);
 		try {
@@ -170,6 +154,7 @@ public class Predictor {
 				System.err.println(e.getMessage());
 			}
 		}
+
 		//valores do video
 		reader= new BufferedReader(videoReader);
 		try {
@@ -188,21 +173,21 @@ public class Predictor {
 		}	 
 
 	}
-	
-	
+
+
 	//associa a condiçao atual do componente com o obtido na calibragem
 
 	private double[] associateValues(){
 		double[] result=new double[4];
+		obtainActualSituation();
 		//cpu
 		CPUEnergyMeter m = new CPUEnergyMeter(0, null, null, null);
 		double[][] cpuMatrix=m.getMatrixOfConsumption();
-		result[0]= cpuMatrix[actualCpus][actualFreq];
+		result[0]= cpuMatrix[actualCpus-1][actualFreq];
 
 		//memoria
 		MemoryMonitor memoryMonitor = new MemoryMonitor();
 
-		System.out.println("");
 		int percentageOfUse=roundMemory(actualMemory, memoryMonitor.getTotalMemory());
 
 		result[1]=memory[percentageOfUse/25];
@@ -217,7 +202,7 @@ public class Predictor {
 		return result;
 	}
 
-	
+
 	/**
 	 * this method is used to validate an experiment.
 	 * @param type
@@ -247,6 +232,13 @@ public class Predictor {
 
 	}
 
+
+	/**
+	 * It's used to check the percentage of memory use.
+	 * @param actualMemory
+	 * @param totalMemory
+	 * @return
+	 */
 	private static int roundMemory(double actualMemory,double totalMemory){ 
 		double percentageOfUse =actualMemory*100.0/totalMemory;
 		int result=0;
@@ -271,9 +263,22 @@ public class Predictor {
 		}
 		return result;
 	}
-	
-	
 
 
+
+
+	public static void main(String[] args) {
+		Predictor p = new Predictor();
+		double[] array = p.predict();
+		double[] current = p.currentUse();
+		System.out.println("eh do array");
+		for(Double d: array){
+			System.out.println(d);
+		}
+		System.out.println("eh current");
+		for (double d : current) {
+			System.out.println(d);
+		}
+	}
 
 }

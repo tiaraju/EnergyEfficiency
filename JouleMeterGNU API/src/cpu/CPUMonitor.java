@@ -115,7 +115,6 @@ public class CPUMonitor{
 		}
 		if(line != null){
 			String percentage = line.split(",")[0].split(":")[1];
-			System.out.println(percentage);
 			int indexOfPercent = percentage.indexOf("u");
 			return Double.parseDouble(percentage.substring(0,indexOfPercent-1));
 		}
