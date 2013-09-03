@@ -138,8 +138,6 @@ public class Predictor {
 		try{
 			reader.close();
 			memoryReader.close();
-			for(Double d:memory){
-			}
 		}catch(Exception e){}
 
 		//valores do disco
@@ -275,16 +273,7 @@ public class Predictor {
 
 	public static void main(String[] args) {
 		Predictor p = new Predictor();
-		double[] array = p.predict();
-		double[] current = p.currentUse();
-		System.out.println("eh do array");
-		for(Double d: array){
-			System.out.println(d);
-		}
-		System.out.println("eh current");
-		for (double d : current) {
-			System.out.println(d);
-		}
-	}
+		p.predict();
 
+	}
 }

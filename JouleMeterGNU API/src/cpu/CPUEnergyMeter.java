@@ -101,11 +101,6 @@ public class CPUEnergyMeter{
 				}
 				reader.close();
 				
-				for(int i=0;i<matrix.length;i++){
-					for(int k=0;k<matrix[i].length;k++){
-						System.out.println(matrix[i][k]);
-					}
-				}
 				return matrix;
 
 			} catch (IOException e) {
