@@ -14,6 +14,12 @@ import cpu.CPUEnergyMeter;
 import cpu.CPUMonitor;
 import disk.DiskMonitor;
 
+
+/**
+ * You must calibrate first to run this class.
+ * @author tiaraju
+ *
+ */
 public class Predictor {
 
 	private int actualFreq;

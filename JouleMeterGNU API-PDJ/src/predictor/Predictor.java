@@ -110,30 +110,19 @@ public class Predictor {
 			System.err.println(e.getMessage());
 		}
 		while(line!=null){
-			System.out.println(line);
 			if(line.substring(0,5).contains("50%")) {
-				System.out.println("foi 50");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[2]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}
 			else if(line.substring(0,5).contains("25%")){
-				System.out.println("foi 25");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[1]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}
 			else if(line.substring(0,5).contains("75%")){
-				System.out.println("foi 75");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[3]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}
 			else if(line.substring(0,5).contains("100%")) {
-				System.out.println("foi 100");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[4]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}
 			else if(line.substring(0,5).contains("0%")){
-				System.out.println("foi 0");
-				System.out.println("colocou: "+line.split(" ")[line.split(" ").length-1]);
 				memory[0]=Double.parseDouble(line.split(" ")[line.split(" ").length-1]);
 			}else{
 				break;
@@ -141,7 +130,6 @@ public class Predictor {
 			try {
 				line=reader.readLine();
 			} catch (IOException e) {
-				System.out.println("naoleualinha");
 			}
 		}
 		try{
