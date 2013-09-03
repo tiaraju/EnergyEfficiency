@@ -270,10 +270,4 @@ public class Predictor {
 
 
 
-
-	public static void main(String[] args) {
-		Predictor p = new Predictor();
-		p.predict();
-
-	}
 }
