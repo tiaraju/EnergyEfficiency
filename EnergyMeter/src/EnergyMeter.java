@@ -47,10 +47,10 @@ public class EnergyMeter {
 		
 			EnergyMeter meter_idrac = new EnergyMeter(IDRAC, "10.1.0.2", "root", "dr4cLSD");
 			int time=1;
-			FileWriter w = new FileWriter("/home/tiaraju/PowerDataChangeFreq.txt");
+			FileWriter w = new FileWriter("/home/tiaraju/setembro2013/watchingHadoop.txt");
 			BufferedWriter writer = new BufferedWriter(w);
 			Thread.sleep(2000);
-			while (time <4000) {
+			while (time <400) {
 				writer.append(new Date().toString().substring(11,19) +  " - "+ meter_idrac.getWattage()+"\n");
 				time++;
 				Thread.sleep(1000); 

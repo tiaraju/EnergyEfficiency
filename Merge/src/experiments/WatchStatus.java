@@ -13,7 +13,7 @@ import cpu.CPUMonitor;
 
 public class WatchStatus {
 
-	//this class is responsable for watch the current status of the components and associate a power value to that status. 
+	//this class is responsible for watch the current status of the components and associate a power value to that status. 
 	// Its used to compare the real value and the estimative ( CPU at first)
 
 	int actualCpus;

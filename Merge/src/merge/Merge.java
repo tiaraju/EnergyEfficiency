@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 /**
  * responsable for put together the power and the details of experiment(freq and cores, for example)
@@ -149,11 +150,11 @@ public class Merge {
 	}
 
 	public void cpuMerge() throws Exception{
-		FileReader f = new FileReader("/home/tiaraju/freqstimes.txt");
+		FileReader f = new FileReader("/home/tiaraju/setembro2013/freqstimes.txt");
 		BufferedReader freq = new BufferedReader(f);
-		FileReader p = new FileReader("/home/tiaraju/PowerDataChangeFreq.txt");
+		FileReader p = new FileReader("/home/tiaraju/setembro2013/PowerDataChangeFreq.txt");
 		BufferedReader power = new BufferedReader(p);
-		FileWriter merge = new FileWriter("/home/tiaraju/merge.txt");
+		FileWriter merge = new FileWriter("/home/tiaraju/setembro2013/merge.txt");
 
 		List<String> freqTime = new ArrayList<String>();
 		List<String> powerTime = new ArrayList<String>();
@@ -198,7 +199,7 @@ public class Merge {
 			double finalValue = 0;
 
 			if(partialValues.size()>0){
-				finalValue=mostRepeatedValue(partialValues);
+				finalValue=median(partialValues);
 			}
 
 			medias.add(finalValue);
@@ -224,7 +225,7 @@ public class Merge {
 
 	private void generateMatrix(List<Double> medias) throws IOException {
 		int k;
-		FileWriter w= new FileWriter("/home/tiaraju/cpu.txt");
+		FileWriter w= new FileWriter("/home/tiaraju/setembro2013/cpu.txt");
 		k=0;
 		for(int i=0;i<24;i++){
 			for(int j=0;j<13;j++){
@@ -249,7 +250,15 @@ public class Merge {
 	 * @param list
 	 * @return
 	 */
-	private double mostRepeatedValue(List<Double> list){
+	private double meanOfMostRepeatedValue(List<Double> list){
+		return mean(MostRepeatedValues(list));
+	}
+	
+	private double medianOfMostRepeatedValue(List<Double> list){
+		return median(MostRepeatedValues(list));
+	}
+	
+	private List<Double> MostRepeatedValues(List<Double> list){
 		int maiorQuantidadeDeVezes=0;
 		List<Double> temp = new ArrayList<Double>();
 		List<Double> result = new ArrayList<Double>();
@@ -274,7 +283,7 @@ public class Merge {
 			temp.clear();			
 		}
 		
-		return mean(result);
+		return result;
 	}
 
 	private double mean(List<Double> list){
@@ -283,6 +292,13 @@ public class Merge {
 			value+=d;
 		}
 		return value/list.size();
+	}
+	
+	private double median(List<Double> list){
+		int middleIndex =0;
+		Collections.sort(list);
+		middleIndex=list.size()/2;
+		return list.get(middleIndex);
 	}
 
 	public static void main(String[] args) throws Exception {
