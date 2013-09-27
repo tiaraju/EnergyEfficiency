@@ -1,0 +1,7 @@
+#file to ignore some stuff
+
+.classpath
+/bin
+
+
+

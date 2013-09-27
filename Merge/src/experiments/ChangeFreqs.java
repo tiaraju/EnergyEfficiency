@@ -18,7 +18,7 @@ public class ChangeFreqs {
 	public void modifyFreq()throws Exception{
 		cpuMonitor= new CPUMonitor();
 		work= new CPUWorkloadGenerator();
-		writer = new FileWriter("/home/tiaraju/resultados/freqstimes.txt");
+		writer = new FileWriter("/home/tiaraju/freqstimes.txt");
 		double[] freqs = cpuMonitor.getCPUFrequencyLevels();
 		int numOfCpus = cpuMonitor.getNumberOfCPUs();
 		for(int k=0;k<numOfCpus;k++){
@@ -29,8 +29,9 @@ public class ChangeFreqs {
 				Runtime.getRuntime().exec("sh teste.sh");
 				work.stressMaximumCPU(k);
 				saveTime(writer,k,freqs.length-i);
-				Thread.sleep(10000);
+				Thread.sleep(15000);
 				work.resetCPUStress();
+				Thread.sleep(5000);
 			}
 			
 		}

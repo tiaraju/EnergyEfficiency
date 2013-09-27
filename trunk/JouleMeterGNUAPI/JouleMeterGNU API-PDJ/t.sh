@@ -1,0 +1,1 @@
+top -b -d 0.9 -n2 | grep 'Cpu(s)' | tail -1 > /home/tiaraju/top.txt
